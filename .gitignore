@@ -1,0 +1,8 @@
+ch01/ch01_env/
+ch02/ch02_env/
+ch03/ch03_env/
+
+ch02/make_fernet.py
+ch02/init_db.sql
+
+*.env
