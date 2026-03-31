@@ -1,10 +1,9 @@
-# pip install llama-index-vector-stores-qdrant
-# pip install llama-index
+# pip install llama-index-vector-stores-qdrant==0.3.0
+# pip install llama-index==0.11.11
 # pip install llama-index-embeddings-openai
 
 
-from llama_index.core import VectorStoreIndex, StorageContext
-from llama_index.core import VectorStoreIndex
+from llama_index.core import VectorStoreIndex, StorageContext, Settings
 from llama_index.vector_stores.qdrant import QdrantVectorStore
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, VectorParams
@@ -12,6 +11,10 @@ from llama_index.core.schema import Document
 
 from qdrant_client import QdrantClient
 client = QdrantClient("http://localhost", port=6333)
+
+# 로컬 임베딩 모델 설정 (한국어 지원)
+embed_model = HuggingFaceEmbedding(model_name="BAAI/bge-m3")
+Settings.embed_model = embed_model
 
 documents = [
     "고양이는 작은 육식동물로, 주로 애완동물로 기릅니다. 민첩하고 장난기 있는 행동으로 유명합니다.",
@@ -31,10 +34,8 @@ if client.collection_exists(collection_name):
 
 client.create_collection(
     collection_name=collection_name,
-    vectors_config=VectorParams(size=1536, distance=Distance.COSINE)
+    vectors_config=VectorParams(size=1024, distance=Distance.COSINE)  # bge-m3 모델 차원
 )
-# b'{"status":{"error":"Wrong input: Vector dimension error: expected dim: 768, got 1536"},"time":0.001923066}'
-
 
 # Qdrant 벡터 스토어 설정
 vector_store = QdrantVectorStore(client=client, collection_name=collection_name)
